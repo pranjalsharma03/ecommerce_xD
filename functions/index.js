@@ -1,42 +1,16 @@
 const functions = require('firebase-functions');
-const express = require('express');
-const cors = require('cors');
-const stripe = require('stripe')('');
+const admin = require('firebase-admin');
 
-const app = express();
+admin.initializeApp();
 
-app.use(cors({
-  origin: true
-}));
-app.use(express.json());
+exports.lowercaseProductName = functions.firestore.document('/products/{documentId}')
+    .onCreate((snap, context) => {
+        const name = snap.data().name;
 
-app.post('/payments/create', async (req, res) => {
-  try {
-    const { amount, shipping } = req.body;
-    const paymentIntent = await stripe.paymentIntents.create({
-      shipping,
-      amount,
-      currency: 'usd'
+        functions.logger.log('Lowercasing product name', context.params.documentId, name);
+
+        const lowercaseName = name.toLowerCase();
+
+        return snap.ref.set({ name_lower: lowercaseName }, { merge: true });
     });
 
-    res
-      .status(200)
-      .send(paymentIntent.client_secret);
-
-  } catch (err) {
-    res
-      .status(500)
-      .json({
-        statusCode: 500,
-        message: err.message
-      });
-  }
-})
-
-app.get('*', (req, res) => {
-  res
-    .status(404)
-    .send('404, Not Found.');
-});
-
-exports.api = functions.https.onRequest(app);
