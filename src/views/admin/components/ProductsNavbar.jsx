@@ -4,9 +4,10 @@ import { ADD_PRODUCT } from 'constants/routes';
 import PropType from 'prop-types';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import {CSVLink} from "react-csv";
 
 const ProductsNavbar = (props) => {
-  const { productsCount, totalProductsCount } = props;
+  const { productsCount, totalProductsCount,filteredProducts } = props;
   const history = useHistory();
 
   return (
@@ -33,6 +34,9 @@ const ProductsNavbar = (props) => {
         <PlusOutlined />
         &nbsp; Add New Product
       </button>
+      <CSVLink data={filteredProducts} filename={"Products.csv"}>
+        .csv
+      </CSVLink>
     </div>
   );
 };

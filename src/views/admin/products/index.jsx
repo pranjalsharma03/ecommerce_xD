@@ -25,6 +25,7 @@ const Products = () => {
       <ProductsNavbar
         productsCount={store.products.items.length}
         totalProductsCount={store.products.total}
+        filteredProducts={store.filteredProducts} 
       />
       <div className="product-admin-items">
         <ProductList {...store}>
